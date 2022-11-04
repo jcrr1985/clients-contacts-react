@@ -1,29 +1,59 @@
 import tw from 'twin.macro'
+import { css } from '@emotion/css'
 import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
+import {
+  TextFieldElement,
+  FormContainer,
+  FormContainerProps,
+} from 'react-hook-form-mui'
 
-export default function ValidationTextFields() {
+const SupplierEditor = (props: FormContainerProps) => {
+  const { onSuccess, ...restProps } = props
+
   return (
     <Box
-      component="form"
-      css={[
-        tw`flex flex-col border rounded`,
-        {
-          '& .MuiTextField-root': tw`m-1 min-w-min`,
-        },
-      ]}
-      noValidate
-      autoComplete="off"
+      component={FormContainer}
+      FormProps={{
+        noValidate: true,
+        autoComplete: 'off',
+        className: css([
+          tw`flex flex-col border rounded`,
+          {
+            '& .MuiTextField-root': tw`m-1 min-w-min`,
+          },
+        ]),
+      }}
+      onSuccess={onSuccess}
+      {...restProps}
     >
-      <TextField id="supplier-name" label="Name" required />
-      <TextField id="supplier-website" label="Website" />
-      <TextField
-        id="supplier-comments"
+      <TextFieldElement
+        id="supplier-name"
+        name="firstName"
+        label="Name"
+        required
+        variant="standard"
+      />
+      <TextFieldElement
+        id="supplier-website"
+        name="website"
+        label="Website"
+        variant="standard"
+      />
+      <TextFieldElement
+        id="supplier-comment"
+        name="comment"
         label="Kommentar"
         multiline
         minRows={5}
       />
-      <TextField id="supplier-delivery-time" label="Lieferzeit" />
+      <TextFieldElement
+        id="supplier-delivery-time"
+        name="deliveryTime"
+        label="Lieferzeit"
+        variant="standard"
+      />
     </Box>
   )
 }
+
+export default SupplierEditor
