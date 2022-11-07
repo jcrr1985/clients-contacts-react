@@ -104,25 +104,23 @@ const useSupplierStore = create<SupplierStoreType>((set, get) => ({
   /* Contact Edition Actions */
 
   addContact: (supplierId: string, contact: Contact) => {
+    // add a temporal id to the contact,
+    // so we can use it as a key in the list,
+    // it will be replaced on the server during
+    // supplier save/update
+    const newContact = { ...contact, _id: nanoid() }
     const updatedSuppliers = get().suppliers.map((supplier) =>
       supplier._id === supplierId
         ? {
             ...supplier,
-            contacts: [
-              ...(supplier.contacts || []),
-              // add a temporal id to the contact,
-              // so we can use it as a key in the list,
-              // it will be replaced on the server during
-              // supplier save/update
-              { ...contact, _id: nanoid() },
-            ],
+            contacts: [...(supplier.contacts || []), newContact],
           }
         : supplier,
     )
     set((state) => ({
       suppliers: updatedSuppliers,
       currentSupplier: updatedSuppliers.find((s) => s._id === supplierId),
-      currentContact: contact,
+      currentContact: newContact,
     }))
   },
   updateContact: (supplierId: string, contact: Contact) => {
