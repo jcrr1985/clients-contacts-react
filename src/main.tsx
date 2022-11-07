@@ -11,7 +11,7 @@ const prepare = async (): Promise<void> => {
   if (import.meta.env.DEV) {
     const { setupWorker } = await import('msw')
     const modules = import.meta.glob<true, string, { default: any[] }>(
-      './mocks/*.ts',
+      './mocks/**/*.ts',
       {
         eager: true,
       },
