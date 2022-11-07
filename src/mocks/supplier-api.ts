@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid'
 
 import { Supplier } from '@/types'
 
+// Suppliers DB
 const suppliers: Supplier[] = []
 
 export default [

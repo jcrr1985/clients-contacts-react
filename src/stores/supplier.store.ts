@@ -139,7 +139,7 @@ const useSupplierStore = create<SupplierStoreType>((set, get) => ({
     }))
   },
 
-  /* Contact Pagination Actions */
+  /* Contact Navigation Actions */
 
   prevContact: () => {
     set((state) => {
