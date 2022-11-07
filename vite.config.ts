@@ -16,7 +16,7 @@ export default defineConfig({
     react({
       exclude: [/node_modules/],
       babel: {
-        plugins: ['macros', 'styled-components'],
+        plugins: ['macros', '@emotion'],
       },
     }),
   ],
