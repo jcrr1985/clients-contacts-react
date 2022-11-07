@@ -14,6 +14,10 @@ export type SupplierStoreType = {
   remove: (supplierId: number) => Promise<void>
   addContact: (contact: Contact) => Promise<void>
   updateContact: (contact: Contact) => Promise<void>
+  nextContact: () => Promise<void>
+  prevContact: () => Promise<void>
+  firstContact: () => Promise<void>
+  lastContact: () => Promise<void>
 }
 
 const useSupplierStore = create<SupplierStoreType>((set, get) => ({
