@@ -20,7 +20,7 @@ const prepare = async (): Promise<void> => {
       .map(({ default: handlers }) => handlers)
       .flat()
     const worker = setupWorker(...handlers)
-    worker.start()
+    worker.start({ onUnhandledRequest: 'bypass' })
   }
 }
 
