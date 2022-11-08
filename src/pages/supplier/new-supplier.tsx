@@ -8,6 +8,7 @@ import { useTheme } from '@mui/material/styles'
 import useSupplierStore from '@/stores/supplier.store'
 import ContactEditor from '@/components/supplier/contact-editor'
 import SupplierEditor from '@/components/supplier/supplier-editor'
+import SupplierList from '@/components/supplier/supplier-list'
 
 const PageHeader: React.FC<{ path: string; title: string }> = ({
   path,
@@ -53,6 +54,7 @@ export default function NewSupplier(props: any) {
 
   return (
     <Stack direction={['row']} height="100vh">
+      <SupplierList suppliers={supplierStore.suppliers} onDelete={() => {}} />
       <Container maxWidth="xl" sx={{ bgcolor: 'common.white' }}>
         <PageHeader title={title} path={path} />
         <Stack
