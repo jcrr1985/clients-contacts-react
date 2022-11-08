@@ -4,7 +4,7 @@ import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import { StyledEngineProvider } from '@mui/material/styles'
 
 import theme from './theme'
-import NewSupplierPage from '@/pages/supplier/new-supplier'
+import Router from './router'
 
 // Load and start mock service worker during development
 const prepare = async (): Promise<void> => {
@@ -31,7 +31,7 @@ prepare().then(() =>
     <StyledEngineProvider injectFirst>
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <NewSupplierPage />
+        <Router />
       </ThemeProvider>
     </StyledEngineProvider>,
   ),
