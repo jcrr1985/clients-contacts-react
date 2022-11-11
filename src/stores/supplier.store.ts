@@ -173,5 +173,9 @@ const useSupplierStore = create<SupplierStoreType>((set, get) => ({
   },
 }))
 
-window.supplierStore = useSupplierStore
+// Globally expose the store during development
+if (import.meta.env.DEV) {
+  // @ts-ignore
+  window.supplierStore = useSupplierStore
+}
 export default useSupplierStore

@@ -6,6 +6,11 @@ import { Supplier } from '@/types'
 // Suppliers DB
 const suppliers: Supplier[] = []
 
+// @ts-ignore
+window.db = {
+  suppliers,
+}
+
 export default [
   // GET /api/suppliers
   rest.get('/api/suppliers', (req, res, ctx) => {
@@ -25,12 +30,13 @@ export default [
     const supplierId = nanoid()
     newSupplier = {
       ...newSupplier,
-      contacts: newSupplier.contacts?.map((contact) => ({
-        ...contact,
-        _id: nanoid(),
-        createdAt: new Date().toISOString(),
-        modifiedAt: new Date().toISOString(),
-      })),
+      contacts:
+        newSupplier.contacts?.map((contact) => ({
+          ...contact,
+          _id: nanoid(),
+          createdAt: new Date().toISOString(),
+          modifiedAt: new Date().toISOString(),
+        })) || [],
       _id: supplierId,
       createdAt: new Date().toISOString(),
       modifiedAt: new Date().toISOString(),
