@@ -11,9 +11,11 @@ export type SupplierStoreType = {
   fetchAll: () => Promise<Supplier[]>
   create: (supplier: Supplier) => Promise<void>
   update: (supplier: Supplier) => Promise<void>
-  remove: (supplierId: number) => Promise<void>
-  addContact: (contact: Contact) => Promise<void>
-  updateContact: (contact: Contact) => Promise<void>
+  remove: (supplierId: string) => Promise<void>
+  setCurrentSupplier: (supplier: Supplier) => void
+  setCurrentContact: (contact: Contact) => void
+  addContact: (supplier: Supplier, contact: Contact) => Promise<void>
+  updateContact: (supplier: Supplier, contact: Contact) => Promise<void>
   nextContact: () => Promise<void>
   prevContact: () => Promise<void>
   firstContact: () => Promise<void>
@@ -84,7 +86,7 @@ const useSupplierStore = create<SupplierStoreType>((set, get) => ({
       }
     })
   },
-  remove: async (supplierId: number) => {
+  remove: async (supplierId: string) => {
     const response = await fetch(`/api/suppliers/${supplierId}`, {
       method: 'DELETE',
     })
@@ -95,50 +97,106 @@ const useSupplierStore = create<SupplierStoreType>((set, get) => ({
       const suppliers = state.suppliers.filter((s) => s._id !== supplierId)
       return {
         suppliers,
-        currentSupplier: suppliers[0] || {},
-        currentContact: suppliers[0].contacts?.[0] || {},
+        currentSupplier:
+          state.currentSupplier._id === supplierId
+            ? suppliers[0] ?? {}
+            : state.currentSupplier,
+        currentContact:
+          state.currentSupplier._id === supplierId
+            ? suppliers[0]?.contacts?.[0] ?? {}
+            : state.currentContact ?? {},
+      }
+    })
+  },
+
+  setCurrentSupplier: (supplier: Supplier) => {
+    set((state) => {
+      const currentSupplier =
+        state.suppliers.find((s) => s._id === supplier._id) ?? supplier
+      return {
+        currentSupplier,
+        currentContact: currentSupplier?.contacts?.[0],
+      }
+    })
+  },
+
+  setCurrentContact: (contact: Contact) => {
+    set((state) => {
+      const currentContact =
+        state.currentSupplier?.contacts?.find((c) => c._id === contact._id) ??
+        contact
+      return {
+        currentContact:
+          currentContact ?? state.currentSupplier?.contacts?.[0] ?? {},
       }
     })
   },
 
   /* Contact Edition Actions */
 
-  addContact: (supplierId: string, contact: Contact) => {
+  addContact: (supplier: Supplier, contact: Contact) => {
     // add a temporal id to the contact,
     // so we can use it as a key in the list,
     // it will be replaced on the server during
     // supplier save/update
     const newContact = { ...contact, _id: nanoid() }
-    const updatedSuppliers = get().suppliers.map((supplier) =>
-      supplier._id === supplierId
-        ? {
-            ...supplier,
-            contacts: [...(supplier.contacts || []), newContact],
-          }
-        : supplier,
-    )
-    set((state) => ({
-      suppliers: updatedSuppliers,
-      currentSupplier: updatedSuppliers.find((s) => s._id === supplierId),
-      currentContact: newContact,
-    }))
+    const supplierId = supplier._id
+    if (supplierId === undefined) {
+      const newSupplier = {
+        ...supplier,
+        contacts: [...(supplier.contacts ?? []), newContact],
+      }
+      set((state) => ({
+        currentSupplier: newSupplier,
+        currentContact: newContact,
+      }))
+    } else {
+      const updatedSuppliers = get().suppliers.map((supplier) =>
+        supplier._id === supplierId
+          ? {
+              ...supplier,
+              contacts: [...(supplier.contacts || []), newContact],
+            }
+          : supplier,
+      )
+      set((state) => ({
+        suppliers: updatedSuppliers,
+        currentSupplier: updatedSuppliers.find((s) => s._id === supplierId),
+        currentContact: newContact,
+      }))
+    }
   },
-  updateContact: (supplierId: string, contact: Contact) => {
-    const updatedSuppliers = get().suppliers.map((supplier) =>
-      supplier._id === supplierId
-        ? {
-            ...supplier,
-            contacts: supplier.contacts?.map((c) =>
-              c._id === contact._id ? contact : c,
-            ),
-          }
-        : supplier,
-    )
-    set((state) => ({
-      suppliers: updatedSuppliers,
-      currentSupplier: updatedSuppliers.find((s) => s._id === supplierId),
-      currentContact: contact,
-    }))
+  updateContact: (supplier: Supplier, contact: Contact) => {
+    const supplierId = supplier._id
+
+    if (supplierId === undefined) {
+      const updatedSupplier = {
+        ...supplier,
+        contacts: supplier.contacts.map((c) =>
+          c._id === contact._id ? contact : c,
+        ),
+      }
+      set((state) => ({
+        currentSupplier: updatedSupplier,
+        currentContact: contact,
+      }))
+    } else {
+      const updatedSuppliers = get().suppliers.map((supplier) =>
+        supplier._id === supplierId
+          ? {
+              ...supplier,
+              contacts: supplier.contacts?.map((c) =>
+                c._id === contact._id ? contact : c,
+              ),
+            }
+          : supplier,
+      )
+      set((state) => ({
+        suppliers: updatedSuppliers,
+        currentSupplier: updatedSuppliers.find((s) => s._id === supplierId),
+        currentContact: contact,
+      }))
+    }
   },
 
   /* Contact Navigation Actions */
