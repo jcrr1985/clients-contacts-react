@@ -6,7 +6,7 @@ export interface Supplier {
   modifiedAt?: string
   name: string
   website?: string
-  contacts: Contact[]
+  contacts?: Contact[]
   comments?: string
   deliveryTime?: number
 }
