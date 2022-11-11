@@ -1,6 +1,8 @@
 import React, { lazy, Suspense } from 'react'
 import { Route, Navigate, Routes, BrowserRouter } from 'react-router-dom'
 
+import Layout from '@/layouts'
+
 const routes = [
   {
     path: '/suppliers',
@@ -12,16 +14,12 @@ const routes = [
   },
 ]
 
-const Layout = (props: any) => {
-  const children = React.Children.only(props.children)
-  return children
-}
-
 const Router = () => {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
+          {/* TODO: Add a home page. For this demo we just redirect to /suppliers */}
           <Route path="/" element={<Navigate to="/suppliers" />} />
           {routes.map(({ path, Component }) => (
             <Route
