@@ -25,7 +25,7 @@ export default function NewSupplier(props: any) {
   }, [])
 
   const handleSupplierUpsert: SubmitHandler<Supplier> = (supplier) => {
-    if (supplier._id) {
+    if (supplier._id !== undefined) {
       supplierStore.update(supplier)
     } else {
       supplierStore.create(supplier)

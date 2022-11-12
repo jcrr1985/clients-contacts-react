@@ -42,21 +42,26 @@ const ContactEditor: React.ForwardRefExoticComponent<ContactEditorProps> =
     const theme = useTheme()
     const supplierStore = useSupplierStore()
     const { currentContact, currentSupplier } = supplierStore
+    const isNewContact = currentContact?._id === undefined
     const contactCount = currentSupplier?.contacts?.length || 0
     const [isCreateMode, setIsCreateMode] = React.useState(contactCount === 0)
     const [prevContact, setPrevContact] = React.useState<Contact | undefined>(
       undefined,
     )
-
     const formContext = useForm({ defaultValues })
     const { handleSubmit, control, reset, formState } = formContext
 
+    const isSaveButtonEnabled = formState.isDirty
+    const isCancelButtonEnabled =
+      (isCreateMode && contactCount > 0) || formState.isDirty
+
     React.useEffect(() => {
-      if (contactCount === 0) setIsCreateMode(true)
-      if (currentContact?._id !== undefined) setIsCreateMode(false)
+      setIsCreateMode(isNewContact)
       const values = Object.assign({}, defaultValues, currentContact)
       reset(values)
     }, [currentContact])
+
+    /******* Event Handlers *******/
 
     const handleOnSave: SubmitHandler<any> = (values: any, e) => {
       const contact: Contact = {
@@ -76,7 +81,6 @@ const ContactEditor: React.ForwardRefExoticComponent<ContactEditorProps> =
     }
 
     const handleCreateMode = () => {
-      setIsCreateMode(true)
       setPrevContact(currentContact)
       supplierStore.setCurrentContact({} as Contact)
       reset(defaultValues)
@@ -89,10 +93,6 @@ const ContactEditor: React.ForwardRefExoticComponent<ContactEditorProps> =
       const contact = currentSupplier?.contacts?.[page - 1]
       supplierStore.setCurrentContact(contact as Contact)
     }
-
-    const isSaveButtonEnabled = formState.isDirty
-    const isCancelButtonEnabled =
-      (isCreateMode && contactCount > 0) || formState.isDirty
 
     return (
       <FormContainer
